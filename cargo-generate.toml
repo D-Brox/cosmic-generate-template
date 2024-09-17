@@ -1,0 +1,42 @@
+[template]
+cargo_generate_version = ">=0.10.0"
+
+[hooks]
+pre = ["pre-script.rhai"]
+post = ["post-script.rhai"]
+
+[placeholders.type]
+type = "string"
+prompt = "What kind of project?"
+choices = ["app", "applet"]
+default = "app"
+
+[conditional.'type == "app"'.placeholders]
+name = { type = "string", prompt = "Name", default = "Cosmic App Template" }
+app_id = { type = "string", prompt = "Application ID (see: https://developer.gnome.org/documentation/tutorials/application-id.html )", default = "com.example.CosmicAppTemplate" }
+repository = {type = "string", prompt = "Repository", default = "https://github.com/my-username/cosmic-app-template" }
+description = { type = "string", prompt = "Description", default = "A Cosmic App Template"}
+
+[conditional.'type == "applet"'.placeholders]
+name = { type = "string", prompt = "Name", default = "My Awesome Applet" }
+app_id = { type = "string", prompt = "Application ID (see: https://developer.gnome.org/documentation/tutorials/application-id.html )", default = "com.example.CosmicAppletTemplate" }
+repository = {type = "string", prompt = "Repository", default = "https://github.com/example/cosmic-applet-template" }
+description = { type = "string", prompt = "Description", default = "A Cosmic Applet Template"}
+
+[placeholders.author]
+type = "string"
+prompt = "Author"
+default = "My Name"
+
+[placeholders.email]
+type = "string"
+prompt = "Email"
+default = "someone@example.com"
+
+[placeholders.license]
+type = "string"
+prompt = "What is your license?"
+choices = ["MIT", "Apache-2.0", "GPL-3.0", "Dual MIT/Apache-2.0", "None"]
+default = "MIT"
+
+

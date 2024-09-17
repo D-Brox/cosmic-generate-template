@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>{{app_id}}</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>{{license}}</project_license>
+  <project_group>COSMIC</project_group>
+  <developer_name>{{author}}</developer_name>
+  <update_contact>{{email}}</update_contact>
+  <url type="homepage">{{repository}}</url>
+  <url type="bugtracker"></url>
+  <name>{{name}}</name>
+  <summary>{{description}}</summary>
+  <description>
+    <p>{{description}}</p>
+  </description>
+  <launchable type="desktop-id">{{app_id}}.desktop</launchable>
+  <icon type="remote">{{repository}}/raw/master/res/icons/hicolor/scalable/apps/{{app_id}}.svg</icon>
+  <screenshots>
+  </screenshots>
+  <provides>
+    <mimetypes>
+      <mimetype>text/plain</mimetype>
+    </mimetypes>
+    <binaries>
+      <binary>{{project-name}}</binary>
+    </binaries>
+  </provides>
+</component>

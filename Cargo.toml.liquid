@@ -1,0 +1,75 @@
+[package]
+name = "{{project-name}}"
+version = "0.0.1"
+edition = "2021"
+authors = ["{{author}} <{{email}}>"]
+license = "{{license}}"
+description = "{{description}}"
+
+[dependencies]
+{% if type == "app" -%}
+futures-util = "0.3.30"
+{% endif -%}
+i18n-embed-fl = "0.9.1"
+open = "5.3.0"
+rust-embed = "8.5.0"
+{% if type == "app" -%}
+tokio = { version = "1.40.0", features = ["full"] }
+{% endif -%}
+
+[dependencies.i18n-embed]
+version = "0.15"
+features = ["fluent-system", "desktop-requester"]
+
+[dependencies.libcosmic]
+git = "https://github.com/pop-os/libcosmic.git"
+default-features = false
+{% if type == "app" -%}
+features = ["dbus-config", "tokio", "winit", "wgpu"]
+{% else -%}
+features = ["applet", "tokio", "wayland"]
+{% endif -%}
+
+# Uncomment to test a locally-cloned libcosmic
+# [patch.'https://github.com/pop-os/libcosmic']
+# libcosmic = { path = "../libcosmic" }
+
+[package.metadata.deb]
+{% if license != "None" and license != "Dual MIT/Apache-2.0" -%}
+license-file = "LICENSE"
+{% endif -%}
+assets = [
+    ["target/release/{{project-name}}", "usr/bin/", "755"],
+    ["res/{{app_id}}.desktop", "usr/share/applications/", "644"],
+    ["res/{{app_id}}.metainfo.xml", "usr/share/metainfo/", "644"],
+    ["res/icons/hicolor/scalable/apps/{{app_id}}.svg", "usr/share/icons/hicolor/", "644"],
+{% if license == "Dual MIT/Apache-2.0" -%}
+    ["LICENSE-APACHE", "/usr/share/doc/{{project-name}}/LICENSE-APACHE", "644"],
+    ["LICENSE-MIT", "/usr/share/doc/{{project-name}}/LICENSE-MIT", "644"],
+{% endif -%}
+]
+
+[package.metadata.generate-rpm]
+assets = [
+    { source = "target/release/{{project-name}}", dest = "/usr/bin/", mode = "755" },
+{% if license == "Dual MIT/Apache-2.0" -%}
+    { source = "LICENSE-APACHE", dest = "/usr/share/doc/{{project-name}}/LICENSE-APACHE", doc = true, mode = "644" },
+    { source = "LICENSE-MIT", dest = "/usr/share/doc/{{project-name}}/LICENSE-MIT", doc = true, mode = "644" },
+{% elsif license != "None" -%}
+    { source = "LICENSE", dest = "/usr/share/doc/{{project-name}}/LICENSE", doc = true, mode = "644" },
+{% endif -%}
+    { source = "res/*.desktop", dest = "/usr/share/applications/", mode = "644" },
+    { source = "res/icons/hicolor/scalable/apps/{{app_id}}.svg", dest = "/usr/share/icons/scalable/apps/", mode = "644"},
+]
+
+[package.metadata.aur]
+files = [
+    ["res/{{app_id}}.desktop", "/usr/share/applications/{{app_id}}.desktop"],
+    ["res/{{app_id}}.metainfo.xml", "/usr/share/metainfo/{{app_id}}.metainfo.xml"],
+    ["LICENSE","/usr/share/doc/{{project-name}}/LICENSE"],
+{% if license == "Dual MIT/Apache-2.0" -%}
+    ["LICENSE-APACHE", "/usr/share/doc/{{project-name}}/LICENSE-APACHE"],
+    ["LICENSE-MIT", "/usr/share/doc/{{project-name}}/LICENSE-MIT"],
+{% endif -%}
+    ["res/icons/hicolor/scalable/apps/{{app_id}}.svg", "/usr/share/icons/scalable/apps/{{app_id}}.svg"],
+]

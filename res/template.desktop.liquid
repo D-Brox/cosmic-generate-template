@@ -1,0 +1,15 @@
+[Desktop Entry]
+Name={{name}}
+Exec={{project-name}} %F
+Terminal=false
+Type=Application
+StartupNotify=true
+Icon={{app_id}}
+Categories=COSMIC;
+Keywords=
+MimeType=
+{% if type=="applet" -%}
+NoDisplay=true
+X-CosmicApplet=true
+X-CosmicHoverPopup=Auto
+{% endif -%}
