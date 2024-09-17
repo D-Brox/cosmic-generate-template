@@ -38,3 +38,11 @@ Refer to the [libcosmic API documentation][api-docs] and [book][book] for help w
 [libcosmic]: https://github.com/pop-os/libcosmic/
 [just]: https://github.com/casey/just
 [flatpak-builder]: https://github.com/flatpak/flatpak-builder
+
+
+## Thanks
+
+This template is based on:
+
+- The official [Cosmic App Template](https://github.com/pop-os/cosmic-app-template)
+- [edfloreshz](https://github.com/edfloreshz)'s [Cosmic Applet Template](https://github.com/edfloreshz/cosmic-applet-template)
