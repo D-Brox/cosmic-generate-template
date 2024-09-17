@@ -12,14 +12,14 @@ choices = ["app", "applet"]
 default = "app"
 
 [conditional.'type == "app"'.placeholders]
-name = { type = "string", prompt = "Name", default = "Cosmic App Template" }
-app_id = { type = "string", prompt = "Application ID (see: https://developer.gnome.org/documentation/tutorials/application-id.html )", default = "com.example.CosmicAppTemplate" }
+name = { type = "string", prompt = "Full name", default = "Cosmic App Template" }
+app_id = { type = "string", prompt = "Application ID ( https://docs.flathub.org/docs/for-app-authors/requirements#application-id )", regex= "[a-zA-Z_][a-zA-Z0-9_]*.[a-zA-Z_][a-zA-Z0-9_]*.[a-zA-Z0-9_-]+", default = "com.example.CosmicAppTemplate" }
 repository = {type = "string", prompt = "Repository", default = "https://github.com/my-username/cosmic-app-template" }
 description = { type = "string", prompt = "Description", default = "A Cosmic App Template"}
 
 [conditional.'type == "applet"'.placeholders]
-name = { type = "string", prompt = "Name", default = "My Awesome Applet" }
-app_id = { type = "string", prompt = "Application ID (see: https://developer.gnome.org/documentation/tutorials/application-id.html )", default = "com.example.CosmicAppletTemplate" }
+name = { type = "string", prompt = "Full name", default = "My Awesome Applet" }
+app_id = { type = "string", prompt = "Application ID ( https://docs.flathub.org/docs/for-app-authors/requirements#application-id )", regex= "[a-zA-Z0-9_]+.[a-zA-Z0-9_]+.[a-zA-Z0-9_-]+", default = "com.example.CosmicAppletTemplate" }
 repository = {type = "string", prompt = "Repository", default = "https://github.com/example/cosmic-applet-template" }
 description = { type = "string", prompt = "Description", default = "A Cosmic Applet Template"}
 
