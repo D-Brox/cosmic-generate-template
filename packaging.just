@@ -36,8 +36,9 @@ update-flatpak:
     command -v cargo-flatpak || cargo install --git https://github.com/D-Brox/cargo-flatpak.git
     cargo flatpak
 
-build-flatpak: update-flatpak
-    flatpak-builder --repo=<repo>  build {{app_id}}.json
+# # Replace "<repo>" with the flatpak repo
+# publish-flatpak: update-flatpak
+#     flatpak-builder --repo=<repo>  build {{app_id}}.json
 
 install-flatpak: update-flatpak
     flatpak-builder --install  build {{app_id}}.json
@@ -49,7 +50,4 @@ flatpak-builder:
     install -Dm0755 {{"{{bin-src}}"}} {{"{{fp-bin-dst}}"}}
     install -Dm0644 {{"{{desktop-src}}"}} {{"{{fp-desktop-dst}}"}}
     install -Dm0644 {{"{{metainfo-src}}"}} {{"{{fp-metainfo-dst}}"}}
-
-    for size in `ls {{"{{icons-src}}"}}`; do \
-        install -Dm0644 "{{"{{icons-src}}"}}/$size/apps/{{"{{APPID}}"}}.png" "{{"{{fp-icons-dst}}"}}/$size/apps/{{"{{APPID}}"}}.png"; \
-    done
+    install -Dm0644 "{{"{{icons-src}}"}}/scalable/apps/{{"{{APPID}}"}}.svg" "{{"{{fp-icons-dst}}"}}/scalable/apps/{{"{{APPID}}"}}.svg"
