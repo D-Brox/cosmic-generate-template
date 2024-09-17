@@ -1,5 +1,4 @@
-// SPDX-License-Identifier: {{license}}
-
+{{LICENSE}}
 use crate::config::Config;
 use crate::fl;
 use cosmic::app::{Command, Core};

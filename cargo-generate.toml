@@ -36,7 +36,7 @@ default = "someone@example.com"
 [placeholders.license]
 type = "string"
 prompt = "What is your license?"
-choices = ["MIT", "Apache-2.0", "GPL-3.0", "Dual MIT/Apache-2.0", "None"]
+choices = ["MIT", "Apache-2.0", "GPL-3.0-only", "Dual MIT/Apache-2.0", "None"]
 default = "MIT"
 
 

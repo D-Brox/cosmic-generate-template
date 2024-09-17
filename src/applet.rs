@@ -1,5 +1,4 @@
-// SPDX-License-Identifier: {{license}}
-
+{{LICENSE}}
 use cosmic::app::{Command, Core};
 use cosmic::iced::wayland::popup::{destroy_popup, get_popup};
 use cosmic::iced::window::Id;
