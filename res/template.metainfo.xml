@@ -17,6 +17,9 @@
   <icon type="remote">{{repository}}/raw/master/res/icons/hicolor/scalable/apps/{{app_id}}.svg</icon>
   <screenshots>
   </screenshots>
+  <categories>
+        <category>COSMIC</category>
+  </categories>
   <provides>
     <mimetypes>
       <mimetype>text/plain</mimetype>
