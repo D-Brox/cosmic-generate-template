@@ -11,7 +11,7 @@ use futures_util::SinkExt;
 use std::collections::HashMap;
 
 const REPOSITORY: &str = "{{repository}}";
-const APP_ICON: &[u8] = include_bytes!("../res/icons/hicolor/scalable/apps/icon.svg");
+const APP_ICON: &[u8] = include_bytes!("../res/icons/hicolor/scalable/apps/{{app_id}}.svg");
 
 /// The application model stores app-specific state used to describe its interface and
 /// drive its logic.
