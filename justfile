@@ -94,8 +94,8 @@ vendor:
     tar pcf vendor.tar .cargo vendor
     rm -rf .cargo vendor
 
-[private]
 # Extracts vendored dependencies
+[private]
 vendor-extract:
     rm -rf vendor
     tar pxf vendor.tar
