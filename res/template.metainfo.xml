@@ -20,7 +20,7 @@
   <categories>
   </categories>
   <provides>
-    <id>com.system76.Cosmic{% if type=="app" -%}Application{%- else -%}Applet{%- endif %}</id>
+    <id>{{app_id}}</id>
     <mimetypes>
       <mimetype>text/plain</mimetype>
     </mimetypes>

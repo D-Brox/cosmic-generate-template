@@ -1,6 +1,6 @@
 {{LICENSE}}
-//! Provides localization support for this crate.
 
+//! Provides localization support for this crate.
 use std::sync::LazyLock;
 use i18n_embed::{
     fluent::{fluent_language_loader, FluentLanguageLoader},

@@ -1,4 +1,5 @@
 {{LICENSE}}
+
 {% if type=="app" -%}
 mod app;
 {% else -%}
@@ -13,14 +14,15 @@ fn main() -> cosmic::iced::Result {
 
     // Enable localizations to be applied.
     i18n::init(&requested_languages);
+    {%- if type=="app" %}
 
-    {% if type=="app" -%}
     // Settings for configuring the application window and iced runtime.
     let settings = cosmic::app::Settings::default();
 
     // Starts the application's event loop with `()` as the application's flags.
     cosmic::app::run::<app::{{name | upper_camel_case}}>(settings, ())
-    {% else -%}
-    cosmic::applet::run::<applet::{{name | upper_camel_case}}>(true, ())
-    {% endif -%}
+    {%- else %}
+    
+    cosmic::applet::run::<applet::{{name | upper_camel_case}}>(())
+    {%- endif %}
 }

@@ -8,26 +8,26 @@ A `cargo-generate` template for developing applications and applets for the COSM
 # Install cargo-generate
 cargo install cargo-generate
 # Create your project using this template
-cargo generate --git https://github.com/D-Brox/cosmic-generate-template
+cargo generate gh:D-Brox/cosmic-generate-template
 ```
 
 A [justfile](./justfile) is included by default with common recipes used by other COSMIC projects. Install from [casey/just][just].
 
-- `just` builds the application with the default `just build-release` recipe
 - `just run` builds and runs the application
-- `just install` installs the project into the system
-- `just vendor` creates a vendored tarball
-- `just build-vendored` compiles with vendored dependencies from that tarball
+- `just run-logs` builds and runs the application with debug logs
+- `just fmt` formats the code
 - `just check` runs clippy on the project to check for linter warnings
 - `just check-json` can be used by IDEs that support LSP
+- `just spellcheck` checks the code for spelling mistakes
 
-A [second justfile](./packaging.just) is also included with packaging recipes:
+A [second justfile](./res/packaging.just) is also included with packaging recipes:
 
-- `deb`: run `just build-deb` and `sudo just install-deb`
-- `rpm`: run `just build-rpm` and `sudo just install-rpm`
-- `aur`: run `just build-aur` and `sudo just install-aur`
-- `flatpak`: run `just install-flatpak` (requires [`flatpak-builder`][flatpak-builder])
-
+- `just build-debug` and `just build-release` build the project with those respective profiles
+- `just install` installs the project into the root system
+- `just install-local` installs the project in the user's home
+- Install project as a `deb`: run `just build-deb && sudo just install-deb`
+- Install project as an `rpm`: run `just build-rpm && sudo just install-rpm`
+- `just vendor` and `just build-vendored` creates a vendored tarball and compiles with vendored dependencies from that tarball, respectively
 
 ## Documentation
 

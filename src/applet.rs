@@ -1,11 +1,11 @@
 {{LICENSE}}
+
 use cosmic::app::{Command, Core};
-use cosmic::iced::wayland::popup::{destroy_popup, get_popup};
+use cosmic::iced::platform_specific::shell::wayland::commands::popup::{destroy_popup, get_popup};
 use cosmic::iced::window::Id;
 use cosmic::iced::Limits;
-use cosmic::iced_style::application;
 use cosmic::widget::{self, settings};
-use cosmic::{Application, Element, Theme};
+use cosmic::{Application, Element};
 
 use crate::fl;
 
@@ -46,7 +46,7 @@ impl Application for {{name | upper_camel_case}} {
 
     type Message = Message;
 
-    const APP_ID: &'static str = "com.example.CosmicAppletTemplate";
+    const APP_ID: &'static str = "{{app_id}}";
 
     fn core(&self) -> &Core {
         &self.core
@@ -96,9 +96,8 @@ impl Application for {{name | upper_camel_case}} {
             .spacing(0)
             .add(settings::item(
                 fl!("example-row"),
-                widget::toggler(None, self.example_row, |value| {
-                    Message::ToggleExampleRow(value)
-                }),
+                widget::toggler(self.example_row)
+                    .on_toggle(|value| Message::ToggleExampleRow(value)),
             ));
 
         self.core.applet.popup_container(content_list).into()
@@ -115,10 +114,13 @@ impl Application for {{name | upper_camel_case}} {
                 } else {
                     let new_id = Id::unique();
                     self.popup.replace(new_id);
-                    let mut popup_settings =
-                        self.core
-                            .applet
-                            .get_popup_settings(Id::MAIN, new_id, None, None, None);
+                    let mut popup_settings = self.core.applet.get_popup_settings(
+                        self.core.main_window_id().unwrap(),
+                        new_id,
+                        None,
+                        None,
+                        None,
+                    );
                     popup_settings.positioner.size_limits = Limits::NONE
                         .max_width(372.0)
                         .min_width(300.0)
@@ -137,7 +139,7 @@ impl Application for {{name | upper_camel_case}} {
         Command::none()
     }
 
-    fn style(&self) -> Option<<Theme as application::StyleSheet>::Style> {
+    fn style(&self) -> Option<cosmic::iced_runtime::Appearance> {
         Some(cosmic::applet::style())
     }
 }

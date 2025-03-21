@@ -1,23 +1,25 @@
 {{LICENSE}}
+
 use crate::config::Config;
 use crate::fl;
-use cosmic::app::{Command, Core};
+use cosmic::app::context_drawer;
 use cosmic::cosmic_config::{self, CosmicConfigEntry};
 use cosmic::iced::alignment::{Horizontal, Vertical};
 use cosmic::iced::{Alignment, Length, Subscription};
+use cosmic::prelude::*;
 use cosmic::widget::{self, icon, menu, nav_bar};
-use cosmic::{cosmic_theme, theme, Application, ApplicationExt, Apply, Element};
+use cosmic::{cosmic_theme, theme};
 use futures_util::SinkExt;
 use std::collections::HashMap;
 
-const REPOSITORY: &str = "{{repository}}";
+const REPOSITORY: &str = env!("CARGO_PKG_REPOSITORY");
 const APP_ICON: &[u8] = include_bytes!("../res/icons/hicolor/scalable/apps/{{app_id}}.svg");
 
 /// The application model stores app-specific state used to describe its interface and
 /// drive its logic.
 pub struct {{name | upper_camel_case}} {
     /// Application state which is managed by the COSMIC runtime.
-    core: Core,
+    core: cosmic::Core,
     /// Display a context drawer with the designated page if defined.
     context_page: ContextPage,
     /// Contains items assigned to the nav bar panel.
@@ -35,11 +37,12 @@ pub enum Message {
     SubscriptionChannel,
     ToggleContextPage(ContextPage),
     UpdateConfig(Config),
+    LaunchUrl(String),
 }
 
 /// Create a COSMIC application from the app model
-impl Application for {{name | upper_camel_case}} {
-    /// The async executor that will be used to run your application's commands.
+impl cosmic::Application for {{name | upper_camel_case}} {
+    /// The async executor that will be used to run your application's Tasks.
     type Executor = cosmic::executor::Default;
 
     /// Data that your application receives to its init method.
@@ -51,16 +54,16 @@ impl Application for {{name | upper_camel_case}} {
     /// Unique identifier in RDNN (reverse domain name notation) format.
     const APP_ID: &'static str = "{{app_id}}";
 
-    fn core(&self) -> &Core {
+    fn core(&self) -> &cosmic::Core {
         &self.core
     }
 
-    fn core_mut(&mut self) -> &mut Core {
+    fn core_mut(&mut self) -> &mut cosmic::Core {
         &mut self.core
     }
 
-    /// Initializes the application with any given flags and startup commands.
-    fn init(core: Core, _flags: Self::Flags) -> (Self, Command<Self::Message>) {
+    /// Initializes the application with any given flags and startup Tasks.
+    fn init(core: cosmic::Core, _flags: Self::Flags) -> (Self, Task<cosmic::Action<Self::Message>>) {
         // Create a nav bar with three page items.
         let mut nav = nav_bar::Model::default();
 
@@ -101,10 +104,10 @@ impl Application for {{name | upper_camel_case}} {
                 .unwrap_or_default(),
         };
 
-        // Create a startup command that sets the window title.
-        let command = app.update_title();
+        // Create a startup Task that sets the window title.
+        let task = app.update_title();
 
-        (app, command)
+        (app, task)
     }
 
     /// Elements to pack at the start of the header bar.
@@ -113,7 +116,7 @@ impl Application for {{name | upper_camel_case}} {
             menu::root(fl!("view")),
             menu::items(
                 &self.key_binds,
-                vec![menu::Item::Button(fl!("about"), MenuAction::About)],
+                vec![menu::Item::Button(fl!("about"), None, MenuAction::About)],
             ),
         )]);
 
@@ -126,13 +129,17 @@ impl Application for {{name | upper_camel_case}} {
     }
 
     /// Display a context drawer if the context page is requested.
-    fn context_drawer(&self) -> Option<Element<Self::Message>> {
+    fn context_drawer(&self) -> Option<context_drawer::ContextDrawer<Self::Message>> {
         if !self.core.window.show_context {
             return None;
         }
 
         Some(match self.context_page {
-            ContextPage::About => self.about(),
+            ContextPage::About => context_drawer::context_drawer(
+                self.about(),
+                Message::ToggleContextPage(ContextPage::About),
+            )
+            .title(fl!("about")),
         })
     }
 
@@ -160,14 +167,15 @@ impl Application for {{name | upper_camel_case}} {
 
         Subscription::batch(vec![
             // Create a subscription which emits updates through a channel.
-            cosmic::iced::subscription::channel(
+            Subscription::run_with_id(
                 std::any::TypeId::of::<MySubscription>(),
-                4,
-                move |mut channel| async move {
-                    _ = channel.send(Message::SubscriptionChannel).await;
-
-                    futures_util::future::pending().await
-                },
+                cosmic::iced::stream::channel(
+                    4,
+                    move |mut channel| async move {
+                        _ = channel.send(Message::SubscriptionChannel).await;
+                        futures_util::future::pending().await
+                    },
+                ),
             ),
             // Watch for application configuration changes.
             self.core()
@@ -184,9 +192,9 @@ impl Application for {{name | upper_camel_case}} {
 
     /// Handles messages emitted by the application and its widgets.
     ///
-    /// Commands may be returned for asynchronous execution of code in the background
+    /// Tasks may be returned for asynchronous execution of code in the background
     /// on the application's async runtime.
-    fn update(&mut self, message: Self::Message) -> Command<Self::Message> {
+    fn update(&mut self, message: Self::Message) -> Task<cosmic::Action<Self::Message>> {
         match message {
             Message::OpenRepositoryUrl => {
                 _ = open::that_detached(REPOSITORY);
@@ -205,20 +213,24 @@ impl Application for {{name | upper_camel_case}} {
                     self.context_page = context_page;
                     self.core.window.show_context = true;
                 }
-
-                // Set the title of the context drawer.
-                self.set_context_title(context_page.title());
             }
 
             Message::UpdateConfig(config) => {
                 self.config = config;
             }
+
+            Message::LaunchUrl(url) => match open::that_detached(&url) {
+                Ok(()) => {}
+                Err(err) => {
+                    eprintln!("failed to open {url:?}: {err}");
+                }
+            }
         }
-        Command::none()
+        Task::none()
     }
 
     /// Called when a nav item is selected.
-    fn on_nav_select(&mut self, id: nav_bar::Id) -> Command<Self::Message> {
+    fn on_nav_select(&mut self, id: nav_bar::Id) -> Task<cosmic::Action<Self::Message>> {
         // Activate the page in the model.
         self.nav.activate(id);
 
@@ -232,8 +244,11 @@ impl {{name | upper_camel_case}} {
         let cosmic_theme::Spacing { space_xxs, .. } = theme::active().cosmic().spacing;
 
         let icon = widget::svg(widget::svg::Handle::from_memory(APP_ICON));
-
         let title = widget::text::title3(fl!("app-title"));
+
+        let hash = env!("VERGEN_GIT_SHA");
+        let short_hash: String = hash.chars().take(7).collect();
+        let date = env!("VERGEN_GIT_COMMIT_DATE");
 
         let link = widget::button::link(REPOSITORY)
             .on_press(Message::OpenRepositoryUrl)
@@ -243,13 +258,22 @@ impl {{name | upper_camel_case}} {
             .push(icon)
             .push(title)
             .push(link)
+            .push(
+                widget::button::link(fl!(
+                    "git-description",
+                    hash = short_hash.as_str(),
+                    date = date
+                ))
+                .on_press(Message::LaunchUrl(format!("{REPOSITORY}/commits/{hash}")))
+                .padding(0),
+            )
             .align_items(Alignment::Center)
             .spacing(space_xxs)
             .into()
     }
 
     /// Updates the header and window titles.
-    pub fn update_title(&mut self) -> Command<Message> {
+    pub fn update_title(&mut self) -> Task<cosmic::Action<Message>> {
         let mut window_title = fl!("app-title");
 
         if let Some(page) = self.nav.text(self.nav.active()) {
@@ -257,7 +281,11 @@ impl {{name | upper_camel_case}} {
             window_title.push_str(page);
         }
 
-        self.set_window_title(window_title)
+        if let Some(id) = self.core.main_window_id() {
+            self.set_window_title(window_title, id)
+        } else {
+            Task::none()
+        }
     }
 }
 
@@ -273,14 +301,6 @@ pub enum Page {
 pub enum ContextPage {
     #[default]
     About,
-}
-
-impl ContextPage {
-    fn title(&self) -> String {
-        match self {
-            Self::About => fl!("about"),
-        }
-    }
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
