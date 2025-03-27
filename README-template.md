@@ -6,14 +6,14 @@
 
 Clone the repository:
 
-```
+```bash
 git clone {{repository}} {{project-name}}
 cd {{project-name}}
 ```
 
 Build and install the project:
 
-```
+```bash
 just build-release
 sudo just install
 ```

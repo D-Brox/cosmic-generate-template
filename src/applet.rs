@@ -1,6 +1,6 @@
 {{LICENSE}}
 
-use cosmic::app::{Command, Core};
+use cosmic::app::{Task, Core};
 use cosmic::iced::platform_specific::shell::wayland::commands::popup::{destroy_popup, get_popup};
 use cosmic::iced::window::Id;
 use cosmic::iced::Limits;
@@ -62,14 +62,14 @@ impl Application for {{name | upper_camel_case}} {
     ///
     /// - `core` is used to passed on for you by libcosmic to use in the core of your own application.
     /// - `flags` is used to pass in any data that your application needs to use before it starts.
-    /// - `Command` type is used to send messages to your application. `Command::none()` can be used to send no messages to your application.
-    fn init(core: Core, _flags: Self::Flags) -> (Self, Command<Self::Message>) {
+    /// - `Task` type is used to send messages to your application. `Task::none()` can be used to send no messages to your application.
+    fn init(core: Core, _flags: Self::Flags) -> (Self, Task<Self::Message>) {
         let app = {{name | upper_camel_case}} {
             core,
             ..Default::default()
         };
 
-        (app, Command::none())
+        (app, Task::none())
     }
 
     fn on_close_requested(&self, id: Id) -> Option<Message> {
@@ -104,9 +104,9 @@ impl Application for {{name | upper_camel_case}} {
     }
 
     /// Application messages are handled here. The application state can be modified based on
-    /// what message was received. Commands may be returned for asynchronous execution on a
+    /// what message was received. Tasks may be returned for asynchronous execution on a
     /// background thread managed by the application's executor.
-    fn update(&mut self, message: Self::Message) -> Command<Self::Message> {
+    fn update(&mut self, message: Self::Message) -> Task<Self::Message> {
         match message {
             Message::TogglePopup => {
                 return if let Some(p) = self.popup.take() {
@@ -136,7 +136,7 @@ impl Application for {{name | upper_camel_case}} {
             }
             Message::ToggleExampleRow(toggled) => self.example_row = toggled,
         }
-        Command::none()
+        Task::none()
     }
 
     fn style(&self) -> Option<cosmic::iced_runtime::Appearance> {
