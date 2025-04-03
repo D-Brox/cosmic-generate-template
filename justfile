@@ -1,5 +1,6 @@
 name := '{{project-name}}'
 export APPID := '{{app_id}}'
+import "res/packaging.just"
 
 # Default recipe which runs `just build-release`
 [private]
