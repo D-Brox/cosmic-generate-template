@@ -82,7 +82,7 @@ impl Application for {{name | upper_camel_case}} {
     /// it has a `Message` associated with it, which dictates what type of message it can send.
     ///
     /// To get a better sense of which widgets are available, check out the `widget` module.
-    fn view(&self) -> Element<Self::Message> {
+    fn view(&self) -> Element<'_, Self::Message> {
         self.core
             .applet
             .icon_button("display-symbolic")
@@ -90,7 +90,7 @@ impl Application for {{name | upper_camel_case}} {
             .into()
     }
 
-    fn view_window(&self, _id: Id) -> Element<Self::Message> {
+    fn view_window(&self, _id: Id) -> Element<'_, Self::Message> {
         let content_list = widget::list_column()
             .padding(5)
             .spacing(0)
@@ -139,7 +139,7 @@ impl Application for {{name | upper_camel_case}} {
         Task::none()
     }
 
-    fn style(&self) -> Option<cosmic::iced_runtime::Appearance> {
+    fn style(&self) -> Option<cosmic::iced::theme::Style> {
         Some(cosmic::applet::style())
     }
 }
